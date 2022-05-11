@@ -55,8 +55,7 @@
             <p>
                 Our code was based off of our implementation for project 4, Cloth Simulator. We used PointMass objects
                 with properties like position, velocity, density, and pressure for our fluid particles. We implemented
-                the simulation loop described in <a
-                    href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>. For
+                the simulation loop described in <a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>. For
                 all of our simulations, we started with a 0.2 x 0.2 x 0.2 unit cube of 42875 particles. Our simulation
                 uses a smoothed particle hydrodynamics approach, which computes the properties of the fluid at any point
                 in space by interpolating the values at finitely many discrete locations. This is done through the use
@@ -64,13 +63,13 @@
                 necessary quantities such as density, pressure, viscosity, and surface tension by considering the
                 contributions for a given particle from each nearby particle. These kernels are given by the following
                 equations:
-                </p><p>
+                </br>
                 <img src="poly6 kernel.png">
-</p><p>
+</br>
                 <img src="spiky kernel.png">
-</p><p>
+</br>
                 <img src="viscosity kernel.png">
-</p><p>
+</br>
 
                 where h is a constant which specifies the maximum possible distance at which another particle should
                 contribute, and r is the distance between the two particles in question. For our simulations, we used h
@@ -116,7 +115,7 @@
                 <img src="pressure force eq.png"> </br>
 
                 where W is now the spiky kernel. Note that all sums are over all particles, but the kernels only
-                contribute for close particles.
+contribute for close particles.</p><p>
 
                 Next, we implemented a viscosity force, which is given by the following for the ith particle.</br>
 
@@ -126,9 +125,9 @@
 
                 Here, &mu; is the viscosity constant (we used 0.0005), m is mass, v is velocity, &rho; is density, and W is
                 the viscosity kernel. The viscosity acts on the velocities of the particles by slowing them down when
-                they are close to each other. Below, we can see our fluid both with and without viscosity.
+                they are close to each other. Below, we can see our fluid both with and without viscosity.</br>
 
-                VISCOSITY COMPARISON (no viscosity or tension vs viscosity but no tension)
+                VISCOSITY COMPARISON (no viscosity or tension vs viscosity but no tension)</br>
 
                 Notice that the fluid with viscosity is slightly more constrained in its motion. Finally, we implemented
                 surface tension. We first needed to find the normal field and curvature of the surface, which are given
@@ -149,9 +148,9 @@
 
                 where &sigma; is a constant (we used 0.000000000001). The surface tension pulls particles on the surface
                 of the fluid closer to the fluid, preventing excessive splashing. We can see the effects in the
-                following comparison.
+                following comparison.</br>
 
-                SURFACE TENSION COMPARISON
+                SURFACE TENSION COMPARISON</br>
 
                 Notice that the splash is much more constrained with surface tension. After computing these forces for
                 each particle, the constant gravitational force is added to each particle’s forces as well. Then, Euler
@@ -160,7 +159,7 @@
                 reflecting the particle’s velocity about the normal to the surface of collision with some damping
                 coefficient. In order to improve the visualization of the particles, we also added slight transparency
                 to make them appear more water-like and changed the color of the particles as a function of their
-                height, to better visualize the splashing effects of the fluid particles.
+                height, to better visualize the splashing effects of the fluid particles.</br>
 
                 The main problems we encountered in our implementation were with the tuning of the parameters of the
                 simulation, especially for large particle counts. We learned that the simulation is extremely sensitive
