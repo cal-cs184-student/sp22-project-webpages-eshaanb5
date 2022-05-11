@@ -55,7 +55,8 @@
             <p>
                 Our code was based off of our implementation for project 4, Cloth Simulator. We used PointMass objects
                 with properties like position, velocity, density, and pressure for our fluid particles. We implemented
-                the simulation loop described in <a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>. For
+                the simulation loop described in <a
+                    href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>. For
                 all of our simulations, we started with a 0.2 x 0.2 x 0.2 unit cube of 42875 particles. Our simulation
                 uses a smoothed particle hydrodynamics approach, which computes the properties of the fluid at any point
                 in space by interpolating the values at finitely many discrete locations. This is done through the use
@@ -65,11 +66,11 @@
                 equations:
                 </br>
                 <img src="poly6 kernel.png">
-</br>
+                </br>
                 <img src="spiky kernel.png">
-</br>
+                </br>
                 <img src="viscosity kernel.png">
-</br>
+                </br>
 
                 where h is a constant which specifies the maximum possible distance at which another particle should
                 contribute, and r is the distance between the two particles in question. For our simulations, we used h
@@ -107,7 +108,8 @@
 
                 <img src="pressure state eq.png"> </br>
 
-                where &rho;<sub>0</sub> is the rest density (a constant we chose, based on the initial density of the fluid cube),
+                where &rho;<sub>0</sub> is the rest density (a constant we chose, based on the initial density of the
+                fluid cube),
                 and k is the ideal gas constant, which effects the strength of the pressure force (we chose a value of
                 0.00000005). Finally, the pressure force for the ith particle is given by </br>
 
@@ -115,7 +117,9 @@
                 <img src="pressure force eq.png"> </br>
 
                 where W is now the spiky kernel. Note that all sums are over all particles, but the kernels only
-contribute for close particles.</p><p>
+                contribute for close particles.
+            </p>
+            <p>
 
                 Next, we implemented a viscosity force, which is given by the following for the ith particle.</br>
 
@@ -123,7 +127,8 @@ contribute for close particles.</p><p>
                 <img src="viscosity eq.png"></br>
 
 
-                Here, &mu; is the viscosity constant (we used 0.0005), m is mass, v is velocity, &rho; is density, and W is
+                Here, &mu; is the viscosity constant (we used 0.0005), m is mass, v is velocity, &rho; is density, and W
+                is
                 the viscosity kernel. The viscosity acts on the velocities of the particles by slowing them down when
                 they are close to each other. Below, we can see our fluid both with and without viscosity.</br>
 
@@ -138,9 +143,10 @@ contribute for close particles.</p><p>
                 <img src="curvature eq.png"></br>
 
 
-                Here, C<sub>s</sub> is approximated by the poly6 kernel. Then, we use these to compute the surface tension force
+                Here, C<sub>s</sub> is approximated by the poly6 kernel. Then, we use these to compute the surface
+                tension force
                 using the equation below.
-</br>
+                </br>
 
                 <img src="surface tension eq.png"></br>
 
@@ -149,7 +155,8 @@ contribute for close particles.</p><p>
                 of the fluid closer to the fluid, preventing excessive splashing. We can see the effects in the
                 following comparison.</br>
 
-                <iframe src="https://drive.google.com/file/d/1zg9aEnN0uA5knMjGRBd9rSEZr71A3unV/preview" width="640" height="480" allow="autoplay"></iframe>
+                <iframe src="https://drive.google.com/file/d/1zg9aEnN0uA5knMjGRBd9rSEZr71A3unV/preview" width="640"
+                    height="480" allow="autoplay" align="middle"></iframe>
 
                 Notice that the splash is much more constrained with surface tension. After computing these forces for
                 each particle, the constant gravitational force is added to each particle’s forces as well. Then, Euler
@@ -181,26 +188,32 @@ contribute for close particles.</p><p>
 
             <h2 align="middle">Results</h3>
 
-                
-                    <h3> Fluid falling into rectangular box</h3>
-                    <iframe src="https://drive.google.com/file/d/10sjsUgbqqFOCAoxAm3pNf3A9HbEIFKPU/preview" width="640" height="480" allow="autoplay"></iframe>
-                                        <h3> Fluid falling onto sphere</h3>
 
-<iframe src="https://drive.google.com/file/d/15CqpvXwkvwdBE3Y6OlcfMn3u5ICd1K8a/preview" width="640" height="480" allow="autoplay"></iframe>
-                    <h3> Fluid falling into hemisphere</h3>
-                    
-<iframe src="https://drive.google.com/file/d/1BBdyQZj8YXDjPcbEsy_ECMYZjGFUgV0I/preview" width="640" height="480" allow="autoplay"></iframe>
+                <h3> Fluid falling into rectangular box</h3>
+                <iframe src="https://drive.google.com/file/d/10sjsUgbqqFOCAoxAm3pNf3A9HbEIFKPU/preview" width="640"
+                    height="480" allow="autoplay" align="middle"></iframe>
+                <h3> Fluid falling onto sphere</h3>
 
-                
+                <iframe src="https://drive.google.com/file/d/15CqpvXwkvwdBE3Y6OlcfMn3u5ICd1K8a/preview" width="640"
+                    height="480" allow="autoplay" align="middle"></iframe>
+                <h3> Fluid falling into hemisphere</h3>
+
+                <iframe src="https://drive.google.com/file/d/1BBdyQZj8YXDjPcbEsy_ECMYZjGFUgV0I/preview" width="640"
+                    height="480" allow="autoplay" align="middle"></iframe>
+
+
 
 
                 <h3 align="middle">References</h3>
 
                 <p>
-                    <a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Particle-Based Fluid Simulation for Interactive Applications</a> - Paper detailing an SPH fluid
+                    <a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Particle-Based Fluid
+                        Simulation for Interactive Applications</a> - Paper detailing an SPH fluid
                     simulator</br>
-                    <a href="https://lucasschuermann.com/writing/implementing-sph-in-2d">Implementing SPH in 2D</a> - Explanations for implementing a 2D version of the above</br>
-                    <a href="http://mmacklin.com/pbf_sig_preprint.pdf">Position Based Fluids</a> - Implementation of a more complex incompressibility constraint
+                    <a href="https://lucasschuermann.com/writing/implementing-sph-in-2d">Implementing SPH in 2D</a> -
+                    Explanations for implementing a 2D version of the above</br>
+                    <a href="http://mmacklin.com/pbf_sig_preprint.pdf">Position Based Fluids</a> - Implementation of a
+                    more complex incompressibility constraint
 
 
                 </p>
