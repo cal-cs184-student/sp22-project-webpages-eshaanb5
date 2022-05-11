@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
     <style>
         body {
@@ -12,7 +13,10 @@
             color: #121212;
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             font-family: 'Source Sans Pro', sans-serif;
         }
     </style>
@@ -30,100 +34,185 @@
 
     <br><br>
 
-        <div>
+    <div>
 
-            <h2 align="middle">Abstract</h2>
+        <h2 align="middle">Abstract</h2>
+        <p>
+            Our fluid simulation is an implementation of the smoothed particle hydrodynamics fluid simulation method,
+            which uses the properties of a few discrete points in the fluid to approximate the properties of the entire
+            fluid. The fluid is modeled as a collection of point mass objects which carry position, velocity, and other
+            attributes. At a high level, we numerically approximated Navier-Stokes equations for fluids to compute the
+            particles’ dynamics. A basic fluid simulation only taking into account gravitational forces and
+            incompressibility was first created. Then, additional forces from factors such as viscosity and surface
+            tension were added to create a more realistic picture of fluid behavior. The behavior of particles upon
+            collision with spherical and flat objects was modeled. Particles were shaded to give them a waterlike look,
+            with color changing according to their height to allow for a better visualization of effects such as
+            splashing.
+        </p>
+
+        <h2 align="middle">Technical approach</h3>
             <p>
-		    Our fluid simulation is an implementation of the smoothed particle hydrodynamics fluid simulation method, which uses the properties of a few discrete points in the fluid to approximate the properties of the entire fluid. The fluid is modeled as a collection of point mass objects which carry position, velocity, and other attributes. At a high level, we numerically approximated Navier-Stokes equations for fluids to compute the particles’ dynamics. A basic fluid simulation only taking into account gravitational forces and incompressibility was first created. Then, additional forces from factors such as viscosity and surface tension were added to create a more realistic picture of fluid behavior. The behavior of particles upon collision with spherical and flat objects was modeled. Particles were shaded to give them a waterlike look, with color changing according to their height to allow for a better visualization of effects such as splashing.
+                Our code was based off of our implementation for project 4, Cloth Simulator. We used PointMass objects
+                with properties like position, velocity, density, and pressure for our fluid particles. We implemented
+                the simulation loop described in <a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>.
+                For all of our simulations, we started with a WIDTHxHEIGHTxDEPTH cube of NUMBER particles. Our
+                simulation uses a smoothed particle hydrodynamics approach, which computes the properties of the fluid
+                at any point in space by interpolating the values at finitely many discrete locations. This is done
+                through the use of multiple kernel functions. We computed 3 kernel functions that we used to approximate
+                many of the necessary quantities such as density, pressure, viscosity, and surface tension by
+                considering the contributions for a given particle from each nearby particle. These kernels are given by
+                the following equations:
+
+                <img src="poly6 kernel.png">
+                <img src="spiky kernel.png">
+                <img src="viscosity kernel.png">
+
+                where h is a constant which specifies the maximum possible distance at which another particle should
+                contribute, and r is the distance between the two particles in question. For our simulations, we used
+                h=PUT VALUE.
             </p>
-
-            <h2 align="middle">Technical approach</h3>
             <p>
-		    Our code was based off of our implementation for project 4, Cloth Simulator. We used PointMass objects with properties like position, velocity, 	density, and pressure for our fluid particles. We implemented the simulation loop described in <a href="https://matthias-		research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>. For all of our simulations, we started with a WIDTHxHEIGHTxDEPTH cube of NUMBER particles. Our simulation uses a smoothed particle hydrodynamics approach, which computes the properties of the fluid at any point in space by interpolating the values at finitely many discrete locations. This is done through the use of multiple kernel functions. We computed 3 kernel functions that we used to approximate many of the necessary quantities such as density, pressure, viscosity, and surface tension by considering the contributions for a given particle from each nearby particle. These kernels are given by the following equations:
+                The poly6 kernel is used for surface tension and density calculations as it is fast to compute, since it
+                only uses the squared distance. The spiky kernel is used for pressure calculations as it has a non-zero
+                gradient when particles are close together, which is needed to prevent particles from clumping together
+                as the pressure force is dependent on the gradient of the kernel function. The viscosity is dependent on
+                the laplacian of the kernel, and thus the viscosity kernel function was chosen such that the laplacian
+                is always positive. We calculated all derivatives by hand analytically, and implemented the functions
+                directly.
+	    </p>
+	    <p>
+                In addition to external forces, there were three additional forces we implemented using our kernel
+                functions to simulate the fluid dynamics. These are all the forces implemented in the Mueller paper.
+                First, we added a pressure force which enforces incompressibility of the fluid through the ideal gas law
+                by pushing particles apart if the density around a certain particle is greater than the rest density,
+                which is a constant we chose. The density for the ith particle is given by
 
-		Poly6 kernel eq
-Spiky kernel eq
-Viscosity kernel eq
+                <img src="density eq.png">
 
-where h is a constant which specifies the maximum possible distance at which another particle should contribute, and r is the distance between the two particles in question. For our simulations, we used h=PUT VALUE.
+                where m is the mass (a constant we chose, MASS VALUE) and W is the poly6 kernel. The pressure for the
+                ith particle is then given by
 
-The poly6 kernel is used for surface tension and density calculations as it is fast to compute, since it only uses the squared distance. The spiky kernel is used for pressure calculations as it has a non-zero gradient when particles are close together, which is needed to prevent particles from clumping together as the pressure force is dependent on the gradient of the kernel function. The viscosity is dependent on the laplacian of the kernel, and thus the viscosity kernel function was chosen such that the laplacian is always positive. We calculated all derivatives by hand analytically, and implemented the functions directly.
-In addition to external forces, there were three additional forces we implemented using our kernel functions to simulate the fluid dynamics. These are all the forces implemented in the Mueller paper. First, we added a pressure force which enforces incompressibility of the fluid through the ideal gas law by pushing particles apart if the density around a certain particle is greater than the rest density, which is a constant we chose. The density for the ith particle is given by
+                <img src="pressure state eq.png">
 
-Density equation
+                where &rho<sub>0</sub> is the rest density (a constant we chose, based on the initial density of the fluid cube),
+                and k is the ideal gas constant, which effects the strength of the pressure force (we chose a value of
+                IDEAL GAS CONSTANT). Finally, the pressure force for the ith particle is given by
 
-where m is the mass (a constant we chose, MASS VALUE) and W is the poly6 kernel. The pressure for the ith particle is then given by
+                <img src="pressure force eq.png">
 
-Pressure state equation
+                where W is now the spiky kernel. Note that all sums are over all particles, but the kernels only
+                contribute for close particles.
 
-where rho0 is the rest density (a constant we chose, based on the initial density of the fluid cube), and k is the ideal gas constant, which effects the strength of the pressure force (we chose a value of IDEAL GAS CONSTANT). Finally, the pressure force for the ith particle is given by
+                Next, we implemented a viscosity force, which is given by the following for the ith particle.
+		    
+		    <img src="viscosity eq.png">
 
-Pressure force equation
 
-where W is now the spiky kernel. Note that all sums are over all particles, but the kernels only contribute for close particles.
+                Here, &mu is the viscosity constant (we used VISCOSITY), m is mass, v is velocity, &rho is density, and W
+                is the viscosity kernel. The viscosity acts on the velocities of the particles by slowing them down when
+                they are close to each other. Below, we can see our fluid both with and without viscosity.
 
-Next, we implemented a viscosity force, which is given by the following for the ith particle.
+                VISCOSITY COMPARISON (no viscosity or tension vs viscosity but no tension)
 
-Here, mu is the viscosity constant (we used VISCOSITY), m is mass, v is velocity, rho is density, and W is the viscosity kernel. The viscosity acts on the velocities of the particles by slowing them down when they are close to each other. Below, we can see our fluid both with and without viscosity.
+                Notice that the fluid with viscosity is slightly more constrained in its motion. Finally, we implemented
+                surface tension. We first needed to find the normal field and curvature of the surface, which are given
+                by the following equations.
 
-VISCOSITY COMPARISON (no viscosity or tension vs viscosity but no tension)
+                                <img src="normal eq.png">
 
-Notice that the fluid with viscosity is slightly more constrained in its motion. Finally, we implemented surface tension. We first needed to find the normal field and curvature of the surface, which are given by the following equations.
+                                <img src="curvature eq.png">
 
-Normal equation
-Curvature equation
 
-Here, Cs is approximated by the poly6 kernel. Then, we use these to compute the surface tension force using the equation below.
+                Here, C<sub>s</sub> is approximated by the poly6 kernel. Then, we use these to compute the surface tension force
+                using the equation below.
 
-Surface tension force equation
+                                <img src="surface tension eq.png">
 
-where sigma is a constant (we use SIGMA). The surface tension pulls particles on the surface of the fluid closer to the fluid, preventing excessive splashing. We can see the effects in the following comparison.
 
-SURFACE TENSION COMPARISON
+                where &sigma is a constant (we use SIGMA). The surface tension pulls particles on the surface of the
+                fluid closer to the fluid, preventing excessive splashing. We can see the effects in the following
+                comparison.
 
-Notice that the splash is much more constrained with surface tension. After computing these forces for each particle, the constant gravitational force is added to each particle’s forces as well. Then, Euler integration is used to compute the new positions and velocities of each particle. Going a bit beyond the Mueller paper, we implemented collisions with objects such as planes and spheres, which are handled by reflecting the particle’s velocity about the normal to the surface of collision with some damping coefficient. In order to improve the visualization of the particles, we also added slight transparency to make them appear more water-like and changed the color of the particles as a function of their height, to better visualize the splashing effects of the fluid particles.
+                SURFACE TENSION COMPARISON
 
-The main problems we encountered in our implementation were with the tuning of the parameters of the simulation, especially for large particle counts. We learned that the simulation is extremely sensitive to the chosen values of parameters, which can cause a lot of difficulty when combined with very slow computation times that make it hard to see if the parameters are set right. We tackled this problem by attempting to pick parameters in a physically motivated way, and also by simple trial and error, trying to identify issues early in the simulation. For some parameters, such as the rest fluid density, we calculated these variables based on the number of particles we used and the size of the fluid cube to avoid manually tuning for every size combination we tested. Another issue that we had was an attractive force between particles when their density was lower than the rest density. This would either result in the outermost particles collapsing inward in an attempt to reach a higher density if the rest density was set to the density of the middle of the fluid, or the interior particles expanding outward if the density was set to match the outer particles to avoid the former effect. This was resolved by removing any attractive negative pressure components from particle force calculations, which was suggested by some implementations of fluid simulations to resolve instability. Throughout this project, we learned a lot about the physics behind fluids and how various physical effects in fluid can be translated into approximate dynamics.
-</p>
+                Notice that the splash is much more constrained with surface tension. After computing these forces for
+                each particle, the constant gravitational force is added to each particle’s forces as well. Then, Euler
+                integration is used to compute the new positions and velocities of each particle. Going a bit beyond the
+                Mueller paper, we implemented collisions with objects such as planes and spheres, which are handled by
+                reflecting the particle’s velocity about the normal to the surface of collision with some damping
+                coefficient. In order to improve the visualization of the particles, we also added slight transparency
+                to make them appear more water-like and changed the color of the particles as a function of their
+                height, to better visualize the splashing effects of the fluid particles.
+
+                The main problems we encountered in our implementation were with the tuning of the parameters of the
+                simulation, especially for large particle counts. We learned that the simulation is extremely sensitive
+                to the chosen values of parameters, which can cause a lot of difficulty when combined with very slow
+                computation times that make it hard to see if the parameters are set right. We tackled this problem by
+                attempting to pick parameters in a physically motivated way, and also by simple trial and error, trying
+                to identify issues early in the simulation. For some parameters, such as the rest fluid density, we
+                calculated these variables based on the number of particles we used and the size of the fluid cube to
+                avoid manually tuning for every size combination we tested. Another issue that we had was an attractive
+                force between particles when their density was lower than the rest density. This would either result in
+                the outermost particles collapsing inward in an attempt to reach a higher density if the rest density
+                was set to the density of the middle of the fluid, or the interior particles expanding outward if the
+                density was set to match the outer particles to avoid the former effect. This was resolved by removing
+                any attractive negative pressure components from particle force calculations, which was suggested by
+                some implementations of fluid simulations to resolve instability. Throughout this project, we learned a
+                lot about the physics behind fluids and how various physical effects in fluid can be translated into
+                approximate dynamics.
+            </p>
 
             <h2 align="middle">Results</h3>
 
-            <p>
-               Rectangular Box, All Effects
+                <p>
+                    Rectangular Box, All Effects
 
-Sphere Collision, All Effects
+                    Sphere Collision, All Effects
 
-Cylindrical Box with Sphere Base, All Effects
+                    Cylindrical Box with Sphere Base, All Effects
 
-            </p>
+                </p>
 
 
-            <h3 align="middle">References</h3>
+                <h3 align="middle">References</h3>
 
-            <p>
-                Particle-Based Fluid Simulation for Interactive Applications - Paper detailing an SPH fluid simulator
-Implementing SPH in 2D - Explanations for implementing a 2D version of the above
-Position Based Fluids - Implementation of a more complex incompressibility constraint
-			
+                <p>
+                    Particle-Based Fluid Simulation for Interactive Applications - Paper detailing an SPH fluid
+                    simulator
+                    Implementing SPH in 2D - Explanations for implementing a 2D version of the above
+                    Position Based Fluids - Implementation of a more complex incompressibility constraint
 
-            </p>
-		
-		<h3 align="middle">Contributions</h3>
 
-            <p>
-                Andrew Wang: Modified project 4 code to function with our project. 
-		
-Larry Yan: Modified particle initialization parameters to use a variable rest density. Created and tested different shaders for the fluid, including the final height-based color gradient and altered the cloth simulation code to better render the particles. Worked on the writeup.
+                </p>
 
-Nate Tausik: Implemented basic structure of point fluid particles, wrote code for incompressibility constraints, and some of the kernel functions. Created the collision detection for the rectangular box and sphere object, and helped with the cylindrical collision. Helped tune parameters for demo videos. Created some of the demo videos for project presentation. Worked on the writeup.	
-			
-Eshaan Bhansali: Read through different fluid simulation papers to determine which algorithm would work best for our project. Worked on the main fluid simulation algorithm, including computing the various forces due to surface tension, viscosity, and pressure. Analytically found derivatives for kernel functions. Wrote the collision for the cylindrical container. Worked on the writeup.
-	
+                <h3 align="middle">Contributions</h3>
 
-            </p>
+                <p>
+                    Andrew Wang: Modified project 4 code to function with our project.
 
-            <p>Link to video: <a href="https://drive.google.com/file/d/19OWOhGUCyZCIoMX09jWvQdgHNk-ZeL4p/view">LINK</a></p>
-            <p>Link to writeup: <a href="https://cal-cs184-student.github.io/sp22-project-webpages-CarneAsadaFry/final/">LINK</a></p>
+                    Larry Yan: Modified particle initialization parameters to use a variable rest density. Created and
+                    tested different shaders for the fluid, including the final height-based color gradient and altered
+                    the cloth simulation code to better render the particles. Worked on the writeup.
+
+                    Nate Tausik: Implemented basic structure of point fluid particles, wrote code for incompressibility
+                    constraints, and some of the kernel functions. Created the collision detection for the rectangular
+                    box and sphere object, and helped with the cylindrical collision. Helped tune parameters for demo
+                    videos. Created some of the demo videos for project presentation. Worked on the writeup.
+
+                    Eshaan Bhansali: Read through different fluid simulation papers to determine which algorithm would
+                    work best for our project. Worked on the main fluid simulation algorithm, including computing the
+                    various forces due to surface tension, viscosity, and pressure. Analytically found derivatives for
+                    kernel functions. Wrote the collision for the cylindrical container. Worked on the writeup.
+
+
+                </p>
+
+                <p>Link to video: <a
+                        href="https://drive.google.com/file/d/19OWOhGUCyZCIoMX09jWvQdgHNk-ZeL4p/view">LINK</a></p>
+                <p>Link to writeup: <a
+                        href="https://cal-cs184-student.github.io/sp22-project-webpages-CarneAsadaFry/final/">LINK</a>
+                </p>
 
 </body>
+
 </html>
