@@ -64,11 +64,13 @@
                 necessary quantities such as density, pressure, viscosity, and surface tension by considering the
                 contributions for a given particle from each nearby particle. These kernels are given by the following
                 equations:
-
-
+                </p><p>
                 <img src="poly6 kernel.png">
+</p><p>
                 <img src="spiky kernel.png">
+</p><p>
                 <img src="viscosity kernel.png">
+</p><p>
 
                 where h is a constant which specifies the maximum possible distance at which another particle should
                 contribute, and r is the distance between the two particles in question. For our simulations, we used h
@@ -92,26 +94,26 @@
                 as the pressure force is dependent on the gradient of the kernel function. The viscosity is dependent on
                 the laplacian of the kernel, and thus the viscosity kernel function was chosen such that the laplacian
                 is always positive. We calculated all derivatives by hand analytically, and implemented the functions
-                directly.
+                directly. </br>
                 In addition to external forces, there were three additional forces we implemented using our kernel
                 functions to simulate the fluid dynamics. These are all the forces implemented in the Mueller paper.
                 First, we added a pressure force which enforces incompressibility of the fluid through the ideal gas law
                 by pushing particles apart if the density around a certain particle is greater than the rest density,
-                which is a constant we chose. The density for the ith particle is given by
+                which is a constant we chose. The density for the ith particle is given by </br>
 
-                <img src="density eq.png">
+                <img src="density eq.png"> </br>
 
                 where m is the mass (we set this to 1) and W is the poly6 kernel. The pressure for the ith particle is
-                then given by
+                then given by </br>
 
-                <img src="pressure state eq.png">
+                <img src="pressure state eq.png"> </br>
 
                 where &rho;<sub>0</sub> is the rest density (a constant we chose, based on the initial density of the fluid cube),
                 and k is the ideal gas constant, which effects the strength of the pressure force (we chose a value of
-                0.00000005). Finally, the pressure force for the ith particle is given by
+                0.00000005). Finally, the pressure force for the ith particle is given by </br>
 
 
-                <img src="pressure force eq.png">
+                <img src="pressure force eq.png"> </br>
 
                 where W is now the spiky kernel. Note that all sums are over all particles, but the kernels only
                 contribute for close particles.
