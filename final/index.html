@@ -118,10 +118,10 @@
                 where W is now the spiky kernel. Note that all sums are over all particles, but the kernels only
                 contribute for close particles.
 
-                Next, we implemented a viscosity force, which is given by the following for the ith particle.
+                Next, we implemented a viscosity force, which is given by the following for the ith particle.</br>
 
 
-                <img src="viscosity eq.png">
+                <img src="viscosity eq.png"></br>
 
 
                 Here, &mu; is the viscosity constant (we used 0.0005), m is mass, v is velocity, &rho; is density, and W is
@@ -132,19 +132,19 @@
 
                 Notice that the fluid with viscosity is slightly more constrained in its motion. Finally, we implemented
                 surface tension. We first needed to find the normal field and curvature of the surface, which are given
-                by the following equations.
+                by the following equations.</br>
 
 
-                <img src="normal eq.png">
+                <img src="normal eq.png"></br>
 
-                <img src="curvature eq.png">
+                <img src="curvature eq.png"></br>
 
 
                 Here, C<sub>s</sub> is approximated by the poly6 kernel. Then, we use these to compute the surface tension force
                 using the equation below.
+</br>
 
-
-                <img src="surface tension eq.png">
+                <img src="surface tension eq.png"></br>
 
 
                 where &sigma; is a constant (we used 0.000000000001). The surface tension pulls particles on the surface
@@ -188,7 +188,7 @@
 
                     Sphere Collision, All Effects
 
-                    Cylindrical Box with Sphere Base, All Effects
+                    <iframe src="https://drive.google.com/file/d/1BBdyQZj8YXDjPcbEsy_ECMYZjGFUgV0I/preview" width="640" height="480" allow="autoplay"></iframe>
 
                 </p>
 
