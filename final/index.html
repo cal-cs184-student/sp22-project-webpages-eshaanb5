@@ -48,28 +48,33 @@
             collision with spherical and flat objects was modeled. Particles were shaded to give them a waterlike look,
             with color changing according to their height to allow for a better visualization of effects such as
             splashing.
+
         </p>
 
         <h2 align="middle">Technical approach</h3>
             <p>
                 Our code was based off of our implementation for project 4, Cloth Simulator. We used PointMass objects
                 with properties like position, velocity, density, and pressure for our fluid particles. We implemented
-                the simulation loop described in <a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>.
-                For all of our simulations, we started with a WIDTHxHEIGHTxDEPTH cube of NUMBER particles. Our
-                simulation uses a smoothed particle hydrodynamics approach, which computes the properties of the fluid
-                at any point in space by interpolating the values at finitely many discrete locations. This is done
-                through the use of multiple kernel functions. We computed 3 kernel functions that we used to approximate
-                many of the necessary quantities such as density, pressure, viscosity, and surface tension by
-                considering the contributions for a given particle from each nearby particle. These kernels are given by
-                the following equations:
+                the simulation loop described in <a
+                    href="https://matthias-research.github.io/pages/publications/sca03.pdf">Muller et al (2003)</a>. For
+                all of our simulations, we started with a 0.2 x 0.2 x 0.2 unit cube of 42875 particles. Our simulation
+                uses a smoothed particle hydrodynamics approach, which computes the properties of the fluid at any point
+                in space by interpolating the values at finitely many discrete locations. This is done through the use
+                of multiple kernel functions. We computed 3 kernel functions that we used to approximate many of the
+                necessary quantities such as density, pressure, viscosity, and surface tension by considering the
+                contributions for a given particle from each nearby particle. These kernels are given by the following
+                equations:
+
 
                 <img src="poly6 kernel.png">
                 <img src="spiky kernel.png">
                 <img src="viscosity kernel.png">
 
                 where h is a constant which specifies the maximum possible distance at which another particle should
-                contribute, and r is the distance between the two particles in question. For our simulations, we used
-                h=PUT VALUE.
+                contribute, and r is the distance between the two particles in question. For our simulations, we used h
+                = 0.104.
+
+
             </p>
             <p>
                 The poly6 kernel is used for surface tension and density calculations as it is fast to compute, since it
@@ -79,8 +84,15 @@
                 the laplacian of the kernel, and thus the viscosity kernel function was chosen such that the laplacian
                 is always positive. We calculated all derivatives by hand analytically, and implemented the functions
                 directly.
-	    </p>
-	    <p>
+            </p>
+            <p>
+                The poly6 kernel is used for surface tension and density calculations as it is fast to compute, since it
+                only uses the squared distance. The spiky kernel is used for pressure calculations as it has a non-zero
+                gradient when particles are close together, which is needed to prevent particles from clumping together
+                as the pressure force is dependent on the gradient of the kernel function. The viscosity is dependent on
+                the laplacian of the kernel, and thus the viscosity kernel function was chosen such that the laplacian
+                is always positive. We calculated all derivatives by hand analytically, and implemented the functions
+                directly.
                 In addition to external forces, there were three additional forces we implemented using our kernel
                 functions to simulate the fluid dynamics. These are all the forces implemented in the Mueller paper.
                 First, we added a pressure force which enforces incompressibility of the fluid through the ideal gas law
@@ -89,14 +101,15 @@
 
                 <img src="density eq.png">
 
-                where m is the mass (a constant we chose, MASS VALUE) and W is the poly6 kernel. The pressure for the
-                ith particle is then given by
+                where m is the mass (we set this to 1) and W is the poly6 kernel. The pressure for the ith particle is
+                then given by
 
                 <img src="pressure state eq.png">
 
                 where &rho<sub>0</sub> is the rest density (a constant we chose, based on the initial density of the fluid cube),
                 and k is the ideal gas constant, which effects the strength of the pressure force (we chose a value of
-                IDEAL GAS CONSTANT). Finally, the pressure force for the ith particle is given by
+                0.00000005). Finally, the pressure force for the ith particle is given by
+
 
                 <img src="pressure force eq.png">
 
@@ -104,12 +117,13 @@
                 contribute for close particles.
 
                 Next, we implemented a viscosity force, which is given by the following for the ith particle.
-		    
-		    <img src="viscosity eq.png">
 
 
-                Here, &mu is the viscosity constant (we used VISCOSITY), m is mass, v is velocity, &rho is density, and W
-                is the viscosity kernel. The viscosity acts on the velocities of the particles by slowing them down when
+                <img src="viscosity eq.png">
+
+
+                Here, &mu is the viscosity constant (we used 0.0005), m is mass, v is velocity, &rho is density, and W is
+                the viscosity kernel. The viscosity acts on the velocities of the particles by slowing them down when
                 they are close to each other. Below, we can see our fluid both with and without viscosity.
 
                 VISCOSITY COMPARISON (no viscosity or tension vs viscosity but no tension)
@@ -118,20 +132,22 @@
                 surface tension. We first needed to find the normal field and curvature of the surface, which are given
                 by the following equations.
 
-                                <img src="normal eq.png">
 
-                                <img src="curvature eq.png">
+                <img src="normal eq.png">
+
+                <img src="curvature eq.png">
 
 
                 Here, C<sub>s</sub> is approximated by the poly6 kernel. Then, we use these to compute the surface tension force
                 using the equation below.
 
-                                <img src="surface tension eq.png">
+
+                <img src="surface tension eq.png">
 
 
-                where &sigma is a constant (we use SIGMA). The surface tension pulls particles on the surface of the
-                fluid closer to the fluid, preventing excessive splashing. We can see the effects in the following
-                comparison.
+                where &sigma is a constant (we used 0.000000000001). The surface tension pulls particles on the surface
+                of the fluid closer to the fluid, preventing excessive splashing. We can see the effects in the
+                following comparison.
 
                 SURFACE TENSION COMPARISON
 
@@ -160,6 +176,7 @@
                 some implementations of fluid simulations to resolve instability. Throughout this project, we learned a
                 lot about the physics behind fluids and how various physical effects in fluid can be translated into
                 approximate dynamics.
+
             </p>
 
             <h2 align="middle">Results</h3>
@@ -188,7 +205,11 @@
                 <h3 align="middle">Contributions</h3>
 
                 <p>
-                    Andrew Wang: Modified project 4 code to function with our project.
+                    Andrew Wang: Modified project 4 code to function with our project. Created a tool to allow us to
+                    make non-realtime videos of our simulation. Implemented a version of the spatial map to work with
+                    our algorithm to accelerate physics calculations. Adjusted sensitive parameter values until desired
+                    simulation results were achieved. Rendered several videos for our presentation and writeup. Worked
+                    on the writeup.
 
                     Larry Yan: Modified particle initialization parameters to use a variable rest density. Created and
                     tested different shaders for the fluid, including the final height-based color gradient and altered
@@ -203,7 +224,6 @@
                     work best for our project. Worked on the main fluid simulation algorithm, including computing the
                     various forces due to surface tension, viscosity, and pressure. Analytically found derivatives for
                     kernel functions. Wrote the collision for the cylindrical container. Worked on the writeup.
-
 
                 </p>
 
